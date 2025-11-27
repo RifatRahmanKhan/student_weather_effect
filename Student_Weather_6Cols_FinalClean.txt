@@ -1,0 +1,14 @@
+Year	Commute	Weather_Impact_Level	Class_Preference	Internet_Access	Home_Comfort
+Graduate Student	Public transportation	1	Strongly prefer online	Yes, mostly reliable	Yes, very comfortable
+PHD	Public transportation	1	Prefer online	Yes, always reliable	Yes, very comfortable
+Graduate Student	Campus shuttle	1	Prefer online	Yes, mostly reliable	Yes, somewhat comfortable
+Graduate Student	Walk	1	No preference	Frequently unreliable	Yes, somewhat comfortable
+PHD	Walk	1	Prefer in-person	Yes, always reliable	Yes, somewhat comfortable
+Graduate Student	Car pooling	1	Strongly prefer online	Yes, always reliable	Yes, very comfortable
+Graduate Student	Public transportation	2	Prefer in-person	Yes, always reliable	Yes, very comfortable
+Graduate Student	Ride	3	No preference	Yes, always reliable	Yes, very comfortable
+Graduate Student	Walk	4	Prefer in-person	Yes, mostly reliable	Yes, very comfortable
+Graduate Student	Bicycle/Scooter	2	Prefer online	Frequently unreliable	Neutral
+Graduate Student	Walk	1	Prefer in-person	Yes, always reliable	Yes, very comfortable
+Graduate Student	Public transportation	1	Strongly prefer in-person	Yes, always reliable	Yes, very comfortable
+Graduate Student	Public transportation	1	Strongly prefer in-person	Yes, always reliable	Yes, very comfortable
