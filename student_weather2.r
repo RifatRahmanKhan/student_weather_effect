@@ -2,7 +2,7 @@
 library(ggplot2)
 library(pwr)
 
-df <- read.delim("Student_Weather_AllColumns_Concise.txt",
+df <- read.delim("student_Weather_8c.txt",
                  sep = "\t", header = TRUE,
                  stringsAsFactors = FALSE, check.names = FALSE)
 
@@ -88,3 +88,53 @@ V
 # Power analysis (UPDATE df to match merged table) ------------------------
 # df = (r-1)*(c-1); here r=3 rows, c=2 cols => df = (3-1)*(2-1) = 2
 pwr.chisq.test(w = V, df = 2, N = sum(contingency_table_merged), sig.level = 0.05)
+
+
+# -------------------------------------------------------------------------
+# Cochran's Q test (most appropriate for repeated-measures categorical data)
+# We binarize ratings: 1–2 = 0 (low), 3–5 = 1 (moderate/high)
+# -------------------------------------------------------------------------
+
+library(DescTools)
+
+# Ensure ratings are numeric (in case they were read as character)
+df$Mild_Weather_Rating     <- as.numeric(df$Mild_Weather_Rating)
+df$Moderate_Weather_Rating <- as.numeric(df$Moderate_Weather_Rating)
+df$Severe_Weather_Rating   <- as.numeric(df$Severe_Weather_Rating)
+
+# Create binary variables: 1 if rating is 3–5, else 0 (for 1–2)
+df$mild_bin     <- ifelse(df$Mild_Weather_Rating     >= 3, 1, 0)
+df$moderate_bin <- ifelse(df$Moderate_Weather_Rating >= 3, 1, 0)
+df$severe_bin   <- ifelse(df$Severe_Weather_Rating   >= 3, 1, 0)
+
+# Keep only complete cases for the three repeated measures
+bin_df <- df[complete.cases(df[, c("mild_bin", "moderate_bin", "severe_bin")]),
+             c("mild_bin", "moderate_bin", "severe_bin")]
+
+# Save respondent-level binary responses (one row per participant)
+write.csv(bin_df, "respondent_binary_responses_by_condition.csv", row.names = FALSE)
+
+# Cochran's Q test
+cq <- CochranQTest(as.matrix(bin_df))
+cq
+
+# -------------------------------------------------------------------------
+# Empirical power estimate (simulation via bootstrap resampling of students)
+# This preserves within-student correlation across conditions.
+# NOTE: This is a post-hoc / observed-data-based power estimate (exploratory).
+# -------------------------------------------------------------------------
+
+set.seed(123)
+
+alpha <- 0.05
+B <- 10000  # increase for more stable estimate
+n <- nrow(bin_df)
+
+pvals <- replicate(B, {
+  samp <- bin_df[sample.int(n, size = n, replace = TRUE), , drop = FALSE]
+  DescTools::CochranQTest(as.matrix(samp))$p.value
+})
+
+power_est <- mean(pvals < alpha, na.rm = TRUE)
+cat("Empirical (bootstrap) power estimate for Cochran's Q at alpha =",
+    alpha, ":", round(power_est, 3), "\n")
